@@ -1,0 +1,27 @@
+version: "1"
+
+steps:
+  - name: build
+    image: maven:3.9.6-eclipse-temurin-17
+    commands:
+      - mvn clean compile
+
+  - name: test
+    image: maven:3.9.6-eclipse-temurin-17
+    commands:
+      - mvn test
+
+  - name: package
+    image: maven:3.9.6-eclipse-temurin-17
+    commands:
+      - mvn clean package -DskipTests
+
+  - name: docker-build
+    image: docker:24
+    commands:
+      - docker build -t myapp:${VELA_BUILD_NUMBER} .
+
+  - name: deploy
+    image: alpine:latest
+    commands:
+      - echo "Deploying application..."
